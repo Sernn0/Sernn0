@@ -18,25 +18,25 @@ function createTriangles(count) {
     triangles.push({
       x: Math.random() * width,
       y: Math.random() * height,
-      size: 20 + Math.random() * 30,
+      size: 30 + Math.random() * 40,
       speed: 0.2 + Math.random() * 0.3,
-      alpha: 0.1 + Math.random() * 0.2
+      alpha: 0.05 + Math.random() * 0.15,
+      gray: Math.floor(80 + Math.random() * 100)
     });
   }
 }
 
 function drawTriangles() {
   ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = '#fff';
   for (const tri of triangles) {
+    const gray = tri.gray;
+    ctx.fillStyle = `rgba(${gray}, ${gray}, ${gray}, ${tri.alpha})`;
     ctx.beginPath();
     ctx.moveTo(tri.x, tri.y);
     ctx.lineTo(tri.x - tri.size / 2, tri.y + tri.size);
     ctx.lineTo(tri.x + tri.size / 2, tri.y + tri.size);
     ctx.closePath();
-    ctx.globalAlpha = tri.alpha;
     ctx.fill();
-    ctx.globalAlpha = 1;
 
     tri.y -= tri.speed;
     if (tri.y + tri.size < 0) {

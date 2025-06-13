@@ -22,6 +22,8 @@ canvas#bg-pattern {
   max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
+  background-color: rgba(17, 17, 17, 0.85);
+  border-radius: 12px;
 }
 
 header {
