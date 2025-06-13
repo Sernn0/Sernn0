@@ -154,3 +154,27 @@ document.querySelectorAll('.skill-card-wrapper').forEach(wrapper => {
 document.querySelector('.skill-popup-close').addEventListener('click', () => {
   document.getElementById('skill-popup').classList.add('hidden');
 });
+
+// 캐러셀 기능 구현
+let currentProjectIndex = 0;
+const projectCards = document.querySelectorAll('.project-card');
+const totalProjects = projectCards.length;
+
+function updateProjectDisplay() {
+  projectCards.forEach((card, index) => {
+    card.style.display = index === currentProjectIndex ? 'block' : 'none';
+  });
+}
+
+document.querySelector('.project-nav.left').addEventListener('click', () => {
+  currentProjectIndex = (currentProjectIndex - 1 + totalProjects) % totalProjects;
+  updateProjectDisplay();
+});
+
+document.querySelector('.project-nav.right').addEventListener('click', () => {
+  currentProjectIndex = (currentProjectIndex + 1) % totalProjects;
+  updateProjectDisplay();
+});
+
+// 초기 상태 업데이트
+updateProjectDisplay();

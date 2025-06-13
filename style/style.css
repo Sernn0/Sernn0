@@ -55,24 +55,124 @@ li {
   margin: 0.5rem 0;
 }
 
-.project-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
+
+
+/* Carousel structure for projects */
+.project-carousel-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-top: 1rem;
+  background-color: #1b1b1b;
+  border-radius: 12px;
+  padding: 1rem 2rem; /* adjusted from 2.5rem to 2rem */
+}
+
+.project-carousel {
+  display: flex;
+  justify-content: center;
+  scroll-snap-type: x mandatory;
+  flex: 1 0 auto;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.project-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  color: #000;
+  width: 16px;
+  height: 350px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.project-nav.left {
+  left: 10px;
+}
+
+.project-nav.right {
+  right: 10px;
 }
 
 .project-card {
-  background: #1b1b1b;
-  padding: 1.5rem;
+  flex: 1 1 auto;
+  max-width: 100%;
+  height: 350px;
+  padding: 10px;
+  background: #111;
   border-radius: 8px;
+  color: #fff;
+  scroll-snap-align: start;
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.05);
-  transition: transform 0.3s ease, background 0.3s ease;
 }
 
-.project-card:hover {
-  transform: translateY(-5px);
-  background: #222;
+.project-inner-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+}
+
+.project-left {
+  width: 30%;
+  height: calc(100% - 20px);
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.project-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.project-divider {
+  width: 95%;
+  border-color: #444;
+}
+
+.project-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #eee;
+  text-align: center;
+  margin-top: -0.3rem; /* added to reduce gap */
+}
+
+.project-summary {
+  font-size: 0.8rem;
+  text-align: center;
+  color: #ccc;
+  margin-top: -0.2rem;
+}
+
+.project-right {
+  width: 70%;
+  height: calc(100% - 20px);
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: left;
+  overflow-y: auto;
 }
 
 footer {
