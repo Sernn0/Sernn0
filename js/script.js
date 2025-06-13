@@ -105,3 +105,23 @@ window.addEventListener('resize', () => {
 resizeCanvas();
 createTriangles(50);
 drawTriangles();
+
+// Skill card popup logic
+const skillDescriptions = {
+  C: "C는 기초적인 시스템 언어로서 포인터나 메모리 관리를 배우는 데 도움이 되었습니다.",
+  Python: "Python은 간결하고 직관적이어서 빠르게 프로토타이핑할 때 유용하게 사용하고 있습니다.",
+  JavaScript: "JavaScript는 웹 프론트엔드 개발에서 자주 사용하며, DOM 조작과 이벤트 처리에 익숙합니다."
+};
+
+document.querySelectorAll('.skill-card-wrapper').forEach(wrapper => {
+  wrapper.addEventListener('click', () => {
+    const skill = wrapper.dataset.skill;
+    const desc = skillDescriptions[skill] || '';
+    document.getElementById('skill-description').textContent = desc;
+    document.getElementById('skill-popup').classList.remove('hidden');
+  });
+});
+
+document.querySelector('.skill-popup-close').addEventListener('click', () => {
+  document.getElementById('skill-popup').classList.add('hidden');
+});

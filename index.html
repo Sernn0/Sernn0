@@ -11,18 +11,44 @@
   <div class="container">
       <header>
         <img src="assets/profile.jpg" alt="프로필 사진" class="profile-img">
-        <h1>여명</h1>
+        <h1>윤여명</h1>
+        <p class="student-id">컴퓨터공학과 20222328</p>
+        <hr class="header-divider">
         <p>프로그래밍과 창작을 통해 세상을 연결하는 개발자</p>
         <p>사람들과 함께 협업하며 문제를 해결하고, 사용자 중심의 서비스를 구현하는 데에 큰 가치를 두고 있습니다.</p>
       </header>
 
       <section id="skills">
-        <h2>스킬</h2>
-        <ul>
-          <li>C 언어 - ★★★☆☆</li>
-          <li>Python - ★★☆☆☆</li>
-          <li>JavaScript - ★★★☆☆</li>
-        </ul>
+        <h2>프로그래밍 언어 활용 능력</h2>
+        <div class="skill-card-container">
+          <div class="skill-card-wrapper" data-skill="C">
+            <div class="skill-card">
+              <img src="assets/icon/c-icon.svg" alt="C" class="skill-card-icon">
+              <p class="skill-name">C</p>
+              <div class="skill-bar-outline">
+                <div class="skill-bar" style="width: 60%;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="skill-card-wrapper" data-skill="JavaScript">
+            <div class="skill-card">
+              <img src="assets/icon/js-icon.svg" alt="JavaScript" class="skill-card-icon">
+              <p class="skill-name">JavaScript</p>
+              <div class="skill-bar-outline">
+                <div class="skill-bar" style="width: 60%;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="skill-card-wrapper" data-skill="Python">
+            <div class="skill-card">
+              <img src="assets/icon/python-icon.svg" alt="Python" class="skill-card-icon">
+              <p class="skill-name">Python</p>
+              <div class="skill-bar-outline">
+                <div class="skill-bar" style="width: 40%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="projects">
@@ -42,9 +68,27 @@
       </section>
 
       <footer>
-        <p>&copy; 2025 여명</p>
+        <p class="footer-contact-label">Contact</p>
+        <div class="footer-icon-group">
+          <a href="https://github.com/Sernn0" target="_blank" class="footer-icon-link">
+            <img src="assets/icon/github.svg" alt="Github" width="20"/>
+          </a>
+          <a href="https://www.instagram.com/nqfsl/" target="_blank" class="footer-icon-link">
+            <img src="assets/icon/instagram.svg" alt="Instagram" width="20"/>
+          </a>
+          <a href="https://www.discord.com/users/368458404718444544" target="_blank" class="footer-icon-link">
+            <img src="assets/icon/discord.svg" alt="Discord" width="20"/>
+          </a>
+        </div>
+        <p>&copy; 2025 윤여명</p>
       </footer>
+</div>
+<div id="skill-popup" class="skill-popup hidden">
+  <div class="skill-popup-content">
+    <span class="skill-popup-close">&times;</span>
+    <p id="skill-description"></p>
   </div>
-  <script src="js/script.js"></script>
+</div>
+<script src="js/script.js"></script>
 </body>
 </html>
