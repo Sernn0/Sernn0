@@ -68,6 +68,9 @@ function createTriangles(count) {
 function drawTriangles() {
   ctx.clearRect(0, 0, width, height);
   for (const tri of triangles) {
+    // Set blur effect before fillStyle
+    ctx.shadowColor = tri.color;
+    ctx.shadowBlur = 4;
     ctx.fillStyle = tri.color;
     ctx.beginPath();
     if (tri.direction === 'down') {
@@ -81,6 +84,9 @@ function drawTriangles() {
     }
     ctx.closePath();
     ctx.fill();
+    // Reset shadow settings after fill
+    ctx.shadowBlur = 0;
+    ctx.shadowColor = 'transparent';
 
     if (tri.direction === 'down') {
       tri.y += tri.speed;
