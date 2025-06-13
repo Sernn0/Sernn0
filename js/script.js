@@ -1,4 +1,3 @@
-// 기하학적인 배경 애니메이션 (간단한 폴리곤 효과)
 const canvas = document.getElementById('bg-pattern');
 const ctx = canvas.getContext('2d');
 
@@ -20,28 +19,28 @@ function createTriangles(count) {
     let sizeCategory = Math.random();
     let size;
     if (sizeCategory < 0.05) {
-      size = 20 + Math.random() * 20; // very small (5%)
+      size = 20 + Math.random() * 20;
     } else if (sizeCategory < 0.25) {
-      size = 35 + Math.random() * 25; // small (20%)
+      size = 35 + Math.random() * 25;
     } else if (sizeCategory < 0.55) {
-      size = 70 + Math.random() * 40; // medium (30%)
+      size = 70 + Math.random() * 40;
     } else {
-      size = 130 + Math.random() * 50; // large (45%)
+      size = 130 + Math.random() * 50;
     }
     let xZone = Math.random();
     let x;
     if (xZone < 0.3) {
-      x = Math.random() * (width / 6); // Region 1
+      x = Math.random() * (width / 6);
     } else if (xZone < 0.45) {
-      x = width / 6 + Math.random() * (width / 6); // Region 2
+      x = width / 6 + Math.random() * (width / 6);
     } else if (xZone < 0.5) {
-      x = width / 3 + Math.random() * (width / 6); // Region 3
+      x = width / 3 + Math.random() * (width / 6);
     } else if (xZone < 0.55) {
-      x = width / 2 + Math.random() * (width / 6); // Region 4
+      x = width / 2 + Math.random() * (width / 6);
     } else if (xZone < 0.7) {
-      x = (2 * width) / 3 + Math.random() * (width / 6); // Region 5
+      x = (2 * width) / 3 + Math.random() * (width / 6);
     } else {
-      x = (5 * width) / 6 + Math.random() * (width / 6); // Region 6
+      x = (5 * width) / 6 + Math.random() * (width / 6);
     }
     triangles.push({
       x,
@@ -53,11 +52,11 @@ function createTriangles(count) {
         const alpha = 0.05 + Math.random() * 0.2;
         const r = Math.random();
         if (r < 0.06) {
-          return `rgba(200, 150, 255, ${alpha})`; // light purple
+          return `rgba(200, 150, 255, ${alpha})`;
         } else if (r < 0.12) {
-          return `rgba(255, 180, 200, ${alpha})`; // light pink
+          return `rgba(255, 180, 200, ${alpha})`;
         } else {
-          return `rgba(${gray}, ${gray}, ${gray}, ${alpha})`; // grayscale
+          return `rgba(${gray}, ${gray}, ${gray}, ${alpha})`;
         }
       })(),
       direction: Math.random() < 0.3 ? 'down' : 'up'
@@ -68,7 +67,6 @@ function createTriangles(count) {
 function drawTriangles() {
   ctx.clearRect(0, 0, width, height);
   for (const tri of triangles) {
-    // Set blur effect before fillStyle
     ctx.shadowColor = tri.color;
     ctx.shadowBlur = 4;
     ctx.fillStyle = tri.color;
@@ -84,7 +82,6 @@ function drawTriangles() {
     }
     ctx.closePath();
     ctx.fill();
-    // Reset shadow settings after fill
     ctx.shadowBlur = 0;
     ctx.shadowColor = 'transparent';
 
@@ -176,5 +173,4 @@ document.querySelector('.project-nav.right').addEventListener('click', () => {
   updateProjectDisplay();
 });
 
-// 초기 상태 업데이트
 updateProjectDisplay();
