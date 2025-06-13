@@ -230,3 +230,7 @@ html, body {
   cursor: pointer;
   font-size: 1.2rem;
 }
+
+#skill-description {
+  text-align: left;
+}
