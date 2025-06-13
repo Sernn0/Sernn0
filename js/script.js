@@ -126,7 +126,7 @@ const skillDescriptions = {
     </div>
     • JavaScript<br><br>
     ▸ JavaScript는 대학교 2학년 때 '웹스크립트 프로그래밍' 수업을 통해 html과 함께 접하였으며 DOM과 객체를 이해하고 활용할 수 있습니다.<br>
-    ▸ 해당 수업으로 흥미가 생겨 프론트엔드 개발자로써 필요한 역량을 채우고자 추후 TypeScript, Node.js, React에 대해 공부할 계획을 세우고 있습니다.
+    ▸ 해당 수업으로 흥미가 생겨 웹 개발자로써 필요한 역량을 채우고자 추후 TypeScript, Node.js, React에 대해 공부할 계획을 세우고 있습니다.
   `,
   Python: `
     <div style="text-align: center;">
