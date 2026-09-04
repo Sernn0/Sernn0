@@ -18,7 +18,7 @@ h1 {
     margin-top: 10px;
     padding-left: 3px;
     color: ghostwhite;
-    letter-spacing: 0.35em;
+    letter-spacing: 0;
 }
 
 h2 {
@@ -26,6 +26,12 @@ h2 {
     border-left: 3px solid white;
     background-color: darkgrey;
     color: black;
+}
+
+h3 {
+    margin-top: 0;
+    margin-bottom: 6px;
+    color: slateblue;
 }
 
 main {
@@ -57,6 +63,29 @@ span {
 
 ul {
     list-style-type: lower-greek;
+}
+
+.now-list p {
+    margin: 6px 0;
+}
+
+.project-list {
+    display: grid;
+    gap: 8px;
+}
+
+.project-card {
+    padding: 8px;
+    border: 2px solid ghostwhite;
+    background-color: gainsboro;
+}
+
+.project-card p {
+    margin-bottom: 0;
+}
+
+.link-list {
+    word-break: break-word;
 }
 
 footer {
