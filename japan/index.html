@@ -22,6 +22,19 @@ button{font-family:inherit}
 #map{position:fixed;inset:0;width:100vw;height:100vh;cursor:grab;display:block;
   background:radial-gradient(1400px 1000px at 55% 45%,#8fd2ff 0%,#5fb6f2 55%,#3f97dc 100%)}
 #map.drag{cursor:grabbing}
+#map,#map *,#logo,#tools,#count,#toggles,#tip,#toast{-webkit-user-select:none;user-select:none}
+body.dragging,body.dragging *{-webkit-user-select:none!important;user-select:none!important}
+.ap{cursor:pointer;transition:opacity .25s}
+.ap .sq{fill:var(--ink);stroke:#fff;stroke-width:2}
+.ap .pl{font-size:13px;fill:#fff;pointer-events:none}
+.ap text.an{opacity:0;transition:opacity .2s;font:400 12px var(--disp);fill:var(--ink);paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+.ap:hover .apg{transform:scale(1.2)}
+.ap .apg{transform-box:fill-box;transform-origin:50% 50%;transition:transform .15s}
+.ap.on .sq{fill:var(--red)}
+.ap.on text.an,.ap:hover text.an,.ap.lbl text.an{opacity:1}
+#aplines line{stroke:var(--red);stroke-width:2.5;stroke-dasharray:6 5;stroke-linecap:round;animation:dash 1s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-11}}
+.ap.on .apg{transform:scale(1.25)}
 #land{filter:drop-shadow(5px 6px 0 rgba(27,31,59,.9))}
 #land path{fill:var(--cream);stroke:var(--ink);stroke-width:1.3;vector-effect:non-scaling-stroke;stroke-linejoin:round}
 #snow{position:fixed;inset:0;pointer-events:none;z-index:4}
@@ -166,6 +179,8 @@ section.p-sec h3{margin:0 0 10px;font:400 17px var(--disp);display:flex;align-it
   </defs>
   <rect width="100%" height="100%" fill="url(#waves)" id="wavebg"/>
   <g id="world"><g id="land"></g></g>
+  <g id="aplines"></g>
+  <g id="aps"></g>
   <g id="pins"></g>
 </svg>
 <canvas id="snow"></canvas>
@@ -210,6 +225,9 @@ const BUILT = "2026-11-20";
 const K = Math.cos(36*Math.PI/180);
 const proj = (lng,lat)=>[(lng-122.5)*K*100,(46.2-lat)*100];
 PLACES.forEach(p=>{[p.x,p.y]=proj(p.lng,p.lat)});
+const AIR = {'新千歳空港':'신치토세','秋田空港':'아키타','青森空港':'아오모리','山形空港':'야마가타','仙台空港':'센다이','羽田空港':'하네다(도쿄)','中部国際空港':'주부(나고야)',
+  '小松空港':'고마쓰','関西国際空港':'간사이','高松空港':'다카마쓰','米子空港':'요나고','出雲縁結び空港':'이즈모','松山空港':'마쓰야마','広島空港':'히로시마','福岡空港':'후쿠오카',
+  '大分空港':'오이타','鹿児島空港':'가고시마','阿蘇くまもと空港':'구마모토','佐賀空港':'사가','女満別空港':'메만베쓰','旭川空港':'아사히카와','山口宇部空港':'야마구치우베'};
 const REGC = {'홋카이도':'#3db5ff','도호쿠':'#8b6cff','간토·이즈':'#ff4d3d','호쿠리쿠·도카이':'#ff9f1c','간사이':'#ff6fb5','주고쿠·시코쿠':'#2ed3a5','규슈':'#ffd23f'};
 
 /* ---------- 분류 ---------- */
@@ -318,6 +336,27 @@ function zoomAt(f,cx,cy,anim){
   go({k,x:cx-(cx-T.x)*r,y:cy-(cy-T.y)*r},anim);
 }
 
+/* ---------- 거점 공항 ---------- */
+const AIRPORTS = {'新千歳空港':[42.775,141.692],'女満別空港':[43.881,144.164],'旭川空港':[43.671,142.447],'青森空港':[40.734,140.691],'秋田空港':[39.616,140.219],
+  '山形空港':[38.412,140.371],'仙台空港':[38.139,140.917],'羽田空港':[35.549,139.780],'中部国際空港':[34.858,136.805],'小松空港':[36.394,136.408],'関西国際空港':[34.434,135.244],
+  '高松空港':[34.214,134.016],'米子空港':[35.492,133.236],'出雲縁結び空港':[35.414,132.890],'松山空港':[33.827,132.700],'広島空港':[34.436,132.919],'福岡空港':[33.586,130.451],
+  '大分空港':[33.479,131.737],'鹿児島空港':[31.803,130.719],'阿蘇くまもと空港':[32.837,130.855],'佐賀空港':[33.150,130.302],'山口宇部空港':[33.930,131.279]};
+const apsG=document.getElementById('aps'); const apEls={}; let AP_SEL=null, AP_ON=true;
+const APS=Object.entries(AIRPORTS).map(([jp,[lat,lng]])=>{const [x,y]=proj(lng,lat);return {jp,x,y,n:PLACES.filter(p=>p.airport===jp).length}}).filter(a=>a.n>0);
+APS.forEach(a=>{
+  const g=document.createElementNS(NS,'g'); g.setAttribute('class','ap'); g.dataset.ap=a.jp;
+  g.innerHTML=`<g class="apg"><rect class="sq" x="-11" y="-11" width="22" height="22" rx="6"/><text class="pl" x="0" y="5" text-anchor="middle">✈</text></g><text class="an" x="15" y="5">${AIR[a.jp]||a.jp} ${a.n}</text>`;
+  g.addEventListener('mouseenter',e=>{tip.innerHTML=`✈️ ${AIR[a.jp]||a.jp} 공항 <span>여기 기준 ${a.n}곳</span>`;tip.style.opacity=1;moveTip(e)});
+  g.addEventListener('mousemove',moveTip); g.addEventListener('mouseleave',hideTip);
+  apsG.appendChild(g); apEls[a.jp]=g;
+});
+function pickAirport(jp){
+  AP_SEL = AP_SEL===jp ? null : jp;
+  render();
+  if(AP_SEL){ closePanel(); const n=PLACES.filter(p=>p.airport===jp).length; toast(`✈️ ${AIR[jp]||jp} 공항 기준 ${n}곳`); }
+  applyState();
+}
+
 /* 핀(물방울 마커) */
 const pinEls={};
 const DROP='M0 0 C-3 -7 -10 -11 -10 -19 A10 10 0 1 1 10 -19 C10 -11 3 -7 0 0Z';
@@ -335,18 +374,25 @@ function render(){
   world.setAttribute('transform',`translate(${T.x},${T.y}) scale(${T.k})`);
   const showLbl = T.k > baseK()*2.2;
   PLACES.forEach(p=>{const g=pinEls[p.id]; g.setAttribute('transform',`translate(${p.x*T.k+T.x},${p.y*T.k+T.y})`); g.classList.toggle('lbl',showLbl);});
+  APS.forEach(a=>{apEls[a.jp].setAttribute('transform',`translate(${a.x*T.k+T.x},${a.y*T.k+T.y})`);apEls[a.jp].classList.toggle('lbl',showLbl)});
+  const L=document.getElementById('aplines'); L.innerHTML='';
+  if(AP_SEL){const a=APS.find(z=>z.jp===AP_SEL); if(a){const ax=a.x*T.k+T.x, ay=a.y*T.k+T.y;
+    L.innerHTML=PLACES.filter(p=>p.airport===AP_SEL).map(p=>`<line x1="${ax}" y1="${ay}" x2="${p.x*T.k+T.x}" y2="${p.y*T.k+T.y-12}"/>`).join('');}}
 }
 function visible(p){ return passToggles(p) && matchPlace(p)!==false; }
 function applyState(){
+  if(window.__apPrev!==AP_SEL){window.__apPrev=AP_SEL;render();}
   let nOn=0,nMatch=0;
   PLACES.forEach(p=>{
     const g=pinEls[p.id], tg=passToggles(p), m=matchPlace(p);
-    let op=1; if(!tg) op=.15; if(m===false) op=Math.min(op,.15); if(SEL && SEL!==p.id) op*=.5;
+    const am = AP_SEL ? p.airport===AP_SEL : null;
+    let op=1; if(!tg) op=.15; if(m===false) op=Math.min(op,.15); if(am===false) op=Math.min(op,.15); if(SEL && SEL!==p.id) op*=.5;
     g.style.opacity=op;
-    g.classList.toggle('match', m===true && tg); g.classList.toggle('sel', SEL===p.id);
+    g.classList.toggle('match', (m===true||am===true) && tg && m!==false); g.classList.toggle('sel', SEL===p.id);
     if(tg) nOn++; if(m===true&&tg) nMatch++;
   });
   if(SEL) pinsG.appendChild(pinEls[SEL]);
+  APS.forEach(a=>{const g=apEls[a.jp]; g.classList.toggle('on',AP_SEL===a.jp); g.style.opacity = !AP_ON ? .18 : (AP_SEL && AP_SEL!==a.jp ? .45 : 1);});
   const cand=PLACES.filter(p=>p.status==='cand').length;
   document.getElementById('count').innerHTML = `📍 후보 ${cand} · 🚫 제외 ${PLACES.length-cand}<br>표시 중 <b>${nOn}</b>곳`+(Q.words.length?` · 검색 <b>${nMatch}</b>곳`:'');
 }
@@ -361,13 +407,15 @@ function toast(s){toastEl.textContent=s;toastEl.classList.add('show');clearTimeo
 
 /* 팬/줌 */
 let drag=null,moved=false;
-svg.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,tx:T.x,ty:T.y};moved=false;svg.setPointerCapture(e.pointerId)});
+svg.addEventListener('pointerdown',e=>{if(e.button!==0)return;e.preventDefault();if(document.activeElement===sIn)sIn.blur();window.getSelection().removeAllRanges();document.body.classList.add('dragging');drag={x:e.clientX,y:e.clientY,tx:T.x,ty:T.y};moved=false;svg.setPointerCapture(e.pointerId)});
+svg.addEventListener('dragstart',e=>e.preventDefault());
 svg.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>4){moved=true;svg.classList.add('drag');hideTip()}
   if(moved){T.x=drag.tx+dx;T.y=drag.ty+dy;render()}});
-svg.addEventListener('pointerup',e=>{svg.classList.remove('drag');
-  if(!moved&&drag){const el=document.elementFromPoint(e.clientX,e.clientY);const pin=el&&el.closest&&el.closest('.pin');
-    if(pin) select(pin.dataset.id); else if(SEL) closePanel();}
-  drag=null});
+function endDrag(e){svg.classList.remove('drag');document.body.classList.remove('dragging');
+  if(e&&!moved&&drag){const el=document.elementFromPoint(e.clientX,e.clientY);const pin=el&&el.closest&&el.closest('.pin');const ap=el&&el.closest&&el.closest('.ap');
+    if(pin) select(pin.dataset.id); else if(ap) pickAirport(ap.dataset.ap); else { if(SEL) closePanel(); if(AP_SEL){AP_SEL=null;applyState()} } }
+  drag=null}
+svg.addEventListener('pointerup',endDrag); svg.addEventListener('pointercancel',()=>endDrag(null));
 svg.addEventListener('wheel',e=>{e.preventDefault();zoomAt(Math.exp(-e.deltaY*0.0016),e.clientX,e.clientY,false)},{passive:false});
 const midX=()=>innerWidth*(SEL?1/3:1/2);
 document.getElementById('zin').onclick=()=>zoomAt(1.6,midX(),innerHeight/2,true);
@@ -402,9 +450,7 @@ function select(id){
 function closePanel(){ if(!SEL) return; SEL=null;panel.classList.remove('open');applyState()}
 document.getElementById('pclose').onclick=closePanel;
 
-const AIR = {'新千歳空港':'신치토세','秋田空港':'아키타','青森空港':'아오모리','山形空港':'야마가타','仙台空港':'센다이','羽田空港':'하네다(도쿄)','中部国際空港':'주부(나고야)',
-  '小松空港':'고마쓰','関西国際空港':'간사이','高松空港':'다카마쓰','米子空港':'요나고','出雲縁結び空港':'이즈모','松山空港':'마쓰야마','広島空港':'히로시마','福岡空港':'후쿠오카',
-  '大分空港':'오이타','鹿児島空港':'가고시마','阿蘇くまもと空港':'구마모토','佐賀空港':'사가','女満別空港':'메만베쓰','旭川空港':'아사히카와','山口宇部空港':'야마구치우베'};
+
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const gm = q=>`https://www.google.com/maps/search/${encodeURIComponent(q)}`;
 const gmNear=(q,p)=>`https://www.google.com/maps/search/${encodeURIComponent(q)}/@${p.lat},${p.lng},15z`;
@@ -514,7 +560,7 @@ sIn.addEventListener('keydown',e=>{
 });
 document.getElementById('clear').onclick=()=>{sIn.value='';onQuery();sIn.focus()};
 addEventListener('keydown',e=>{ if(document.activeElement===sIn) return;
-  if(e.key==='Escape'&&SEL) closePanel();
+  if(e.key==='Escape'){ if(SEL) closePanel(); else if(AP_SEL){AP_SEL=null;applyState()} }
   if(SEL&&window.__gal&&(e.key==='ArrowRight'||e.key==='ArrowLeft')) window.__gal(e.key==='ArrowRight'?1:-1);
 });
 
@@ -523,9 +569,10 @@ const tgEl=document.getElementById('toggles');
 function drawToggles(){
   tgEl.innerHTML=GROUPS.map(g=>`<div class="tg-grp" style="--c:${g.c}"><em>${g.name}</em>${g.items.map(i=>{
     const n=PLACES.filter(i.f).length;
-    return `<button class="chip${ON[i.k]?'':' off'}" data-k="${i.k}" title="${i.tip||''}"><span class="e">${i.e}</span>${i.l}<small>${n}</small></button>`}).join('')}</div>`).join('').replace(/<\/div>$/,'<button id="tgReset">↺ 모두 켜기</button></div>');
+    return `<button class="chip${ON[i.k]?'':' off'}" data-k="${i.k}" title="${i.tip||''}"><span class="e">${i.e}</span>${i.l}<small>${n}</small></button>`}).join('')}</div>`).join('').replace(/<\/div>$/,'</div>')+`<div class="tg-grp" style="--c:#dfe3ff"><em>표시</em><button class="chip${AP_ON?'':' off'}" id="apChip" title="거점 공항 마커 표시"><span class="e">✈️</span>거점 공항<small>${APS.length}</small></button><button id="tgReset">↺ 모두 켜기</button></div>`;
   tgEl.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{ON[c.dataset.k]=!ON[c.dataset.k];drawToggles();applyState()});
-  document.getElementById('tgReset').onclick=()=>{Object.keys(ON).forEach(k=>ON[k]=true);drawToggles();applyState()};
+  document.getElementById('tgReset').onclick=()=>{Object.keys(ON).forEach(k=>ON[k]=true);AP_ON=true;drawToggles();applyState()};
+  document.getElementById('apChip').onclick=()=>{AP_ON=!AP_ON;if(!AP_ON)AP_SEL=null;drawToggles();applyState()};
 }
 
 /* ---------- 눈 효과 ---------- */
